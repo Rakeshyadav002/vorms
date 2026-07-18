@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+
+# Curious?
+# /secret.html
+# /login.html

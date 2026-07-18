@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL // Secure Access Terminal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#070b10;
+  --panel:#0d141c;
+  --panel-2:#111b25;
+  --line:#1c2b38;
+  --green:#39ff88;
+  --cyan:#4fd8ff;
+  --red:#ff4f5e;
+  --text:#c9d6df;
+  --muted:#5c6c78;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+html,body{
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+}
+
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:42px 42px;
+  opacity:0.13;
+  pointer-events:none;
+  z-index:0;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  top:50%; left:50%;
+  width:900px; height:900px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(57,255,136,0.07), transparent 65%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.stage{
+  position:relative;
+  z-index:2;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  justify-content:center;
+  margin-bottom:30px;
+}
+.brand-mark{
+  width:38px; height:38px;
+  border:1.5px solid var(--green);
+  display:grid; place-items:center;
+  transform:rotate(45deg);
+  flex-shrink:0;
+}
+.brand-mark span{ transform:rotate(-45deg); font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:800; color:var(--green); }
+.brand-text h1{
+  font-family:'JetBrains Mono',monospace;
+  font-size:19px;
+  letter-spacing:4px;
+  font-weight:700;
+  color:#eef4f7;
+  text-align:left;
+}
+.brand-text p{
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--muted);
+  margin-top:3px;
+  text-transform:uppercase;
+}
+
+.card-col{
+  width:100%;
+  max-width:400px;
+}
+
+.card{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--line);
+  position:relative;
+  padding:38px 36px 32px;
+}
+.card::before{
+  content:"";
+  position:absolute; top:-1px; left:-1px; right:-1px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--green), var(--cyan), transparent);
+  background-size:200% 100%;
+  animation:scanbar 3s linear infinite;
+}
+@keyframes scanbar{ to{ background-position:-200% 0; } }
+
+.corner{ position:absolute; width:14px; height:14px; border-color:var(--green); }
+.corner.tl{ top:-1px; left:-1px; border-top:2px solid; border-left:2px solid; }
+.corner.tr{ top:-1px; right:-1px; border-top:2px solid; border-right:2px solid; }
+.corner.bl{ bottom:-1px; left:-1px; border-bottom:2px solid; border-left:2px solid; }
+.corner.br{ bottom:-1px; right:-1px; border-bottom:2px solid; border-right:2px solid; }
+
+.card-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  color:var(--green);
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.card h2{
+  font-size:23px;
+  font-weight:600;
+  color:#eef4f7;
+  margin-bottom:6px;
+}
+.card p.sub{
+  font-size:12.5px;
+  color:var(--muted);
+  margin-bottom:28px;
+}
+
+.field{ margin-bottom:18px; }
+.field label{
+  display:block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  color:var(--muted);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+.field-inner{
+  display:flex;
+  align-items:center;
+  border:1px solid var(--line);
+  background:var(--panel-2);
+  transition:border-color .15s, box-shadow .15s;
+}
+.field-inner:focus-within{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(57,255,136,0.08);
+}
+.field-inner .icon{
+  padding:0 12px;
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  flex-shrink:0;
+}
+.field-inner input{
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  padding:12px 12px 12px 0;
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;
+  letter-spacing:0.5px;
+}
+.field-inner input::placeholder{ color:#3a4855; }
+
+.row-between{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+.chk{
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; color:var(--muted);
+  cursor:pointer;
+  user-select:none;
+}
+.chk input{ accent-color:var(--green); width:13px; height:13px; }
+.forgot{
+  font-size:12px;
+  color:var(--cyan);
+  text-decoration:none;
+}
+.forgot:hover{ text-decoration:underline; }
+
+.btn{
+  width:100%;
+  padding:13px;
+  background:var(--green);
+  color:#04150b;
+  border:none;
+  font-family:'JetBrains Mono',monospace;
+  font-weight:700;
+  font-size:12.5px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:filter .15s, transform .05s;
+}
+.btn:hover{ filter:brightness(1.1); }
+.btn:active{ transform:scale(0.99); }
+.btn:disabled{ filter:grayscale(0.6) brightness(0.7); cursor:progress; }
+
+.msg{
+  margin-top:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.5px;
+  min-height:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.msg.ok{ color:var(--green); }
+.msg.bad{ color:var(--red); }
+.msg.pending{ color:#ffb020; }
+
+.divider{
+  display:flex; align-items:center; gap:12px;
+  margin:24px 0 18px;
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+}
+.divider::before, .divider::after{
+  content:""; flex:1; height:1px; background:var(--line);
+}
+
+.footnote{
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.6;
+}
+.footnote b{ color:#8a9aa6; }
+
+.shake{ animation:shake .4s; }
+@keyframes shake{
+  10%,90%{ transform:translateX(-2px); }
+  20%,80%{ transform:translateX(4px); }
+  30%,50%,70%{ transform:translateX(-7px); }
+  40%,60%{ transform:translateX(7px); }
+}
+
+.card.granted{ border-color:var(--green); box-shadow:0 0 30px rgba(57,255,136,0.12); }
+
+@media (max-width:480px){
+  .card{ padding:30px 24px 26px; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="card-col">
+    <div class="brand">
+      <div class="brand-mark"><span>S</span></div>
+      <div class="brand-text">
+        <h1>SENTINEL</h1>
+        <p>Secure Access Terminal</p>
+      </div>
+    </div>
+
+    <div class="card" id="card">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+
+      <div class="card-eyebrow">// authentication required</div>
+      <h2>Operator Sign-In</h2>
+      <p class="sub">Enter your credentials to access the console.</p>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="user">Operator ID</label>
+          <div class="field-inner">
+            <span class="icon">&gt;</span>
+            <input type="text" id="user" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="pass">Passphrase</label>
+          <div class="field-inner">
+            <span class="icon">&#128274;</span>
+            <input type="password" id="pass" placeholder="••••••••••" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="chk"><input type="checkbox" id="remember"> Remember this device</label>
+          <a href="forgot.txt" class="forgot">Forgot passphrase?</a>
+        </div>
+
+        <button type="submit" class="btn" id="btn">Authenticate</button>
+        <div class="msg" id="msg"></div>
+      </form>
+
+      <div class="divider">SESSION ENCRYPTED — AES-256</div>
+      <p class="footnote">Unauthorized access attempts are logged and traced.<br><b>Demo credentials</b> — for local/offline use only.</p>
+    </div>
+  </div>
+</div>
+
+<script src="scri.js"></script>
+
+</body>
+</html>

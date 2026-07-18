@@ -1,0 +1,3 @@
+        Oops! You need the correct passphrase to log in.
+        There is no password recovery available for this terminal.
+        The only way to gain access is by entering the correct credentials.
